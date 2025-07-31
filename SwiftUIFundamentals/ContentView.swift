@@ -9,24 +9,34 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var greeting = "Welcome!"
+    private var great = "Great"
+    private var awesome = "Awesome"
+    
     var body: some View {
         VStack {
+            Spacer()
             Image(systemName: "swift")
                 .resizable()
                 .foregroundColor(Color.orange)
                 .scaledToFit()
-                .border(.mint)
+                .frame(width: 200.0, height: 200.0)
             
             Text(greeting)
                 .font(.title)
-            
-            Text("this is a sample line")
-                .font(.body)
-                .fontWeight(.semibold)
-            
-            Button("Click Me") {
-                greeting = ["Hello", "Hola","Bonjour","Hallo","Ciao","Konnichiwa","Ni Hao","Zdravstvuyte"].randomElement()!
+                .fontWeight(.ultraLight)
+            Spacer()
+            HStack{
+                Button(awesome) {
+                    greeting = awesome+"!"
+                }
+                
+                Button(great) {
+                    greeting = great+"!"
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .font(.title2)
+            .tint(.orange)
         }
         .padding()
     }
