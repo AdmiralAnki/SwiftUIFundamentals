@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var greeting = "Welcome!"
     var body: some View {
         VStack {
             Image(systemName: "swift")
@@ -16,12 +17,16 @@ struct ContentView: View {
                 .scaledToFit()
                 .border(.mint)
             
-            Text("Hello, world!")
+            Text(greeting)
                 .font(.title)
             
-            Text(" this is a sample line")
+            Text("this is a sample line")
                 .font(.body)
-                .fontWeight(.semibold)        
+                .fontWeight(.semibold)
+            
+            Button("Click Me") {
+                greeting = ["Hello", "Hola","Bonjour","Hallo","Ciao","Konnichiwa","Ni Hao","Zdravstvuyte"].randomElement()!
+            }
         }
         .padding()
     }
