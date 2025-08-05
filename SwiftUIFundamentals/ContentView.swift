@@ -10,8 +10,9 @@ import SwiftUI
 struct ContentView: View {
     @State private var message = ""
     @State private var imageName = ""
-    @State private var imageNumber = 0
-    @State private var index = 0
+    
+    @State var lastMessageNumber = -1
+    @State var lastImageNumber = -1
     
     let messages = ["You are Awesome!",
                     "You are Great!",
@@ -43,19 +44,23 @@ struct ContentView: View {
             
             Button("Press me!") {
                 
-                message = messages[index]
-                index+=1
+                var messageNumber = Int.random(in: 0..<messages.count)
+                var imageNumber = Int.random(in: 0..<8)
                 
+                while messageNumber == lastMessageNumber{
+                    messageNumber = Int.random(in: 0..<messages.count)
+                }
+                
+                message = messages[messageNumber]
+                lastMessageNumber = messageNumber
+                
+                while imageNumber == lastImageNumber{
+                    imageNumber = Int.random(in: 0..<8)
+                }
+                print("message: current: ",imageNumber,"last: ",lastImageNumber)
                 imageName = "image"+"\(imageNumber)"
-                imageNumber+=1
-                                
-                if index > messages.count-1{
-                    index = 0
-                }
+                lastImageNumber = imageNumber
                 
-                if imageNumber > 7{
-                    imageNumber = 0
-                }
                 
             }
             .buttonStyle(.borderedProminent)
@@ -63,6 +68,21 @@ struct ContentView: View {
             .tint(.orange)
         }
         .padding()
+    }
+    
+    func diceExample(){
+         let sum = rollDice()+rollDice()+rollDice()
+        print("You rolled the result: ",sum)
+        
+        print(Bool.random() ? "Coin Flip: Heads" : "Coin Flip: Tail")
+        
+        let randomIndex = Int.random(in: 0..<messages.count)
+        print(messages[randomIndex])
+        
+    }
+    
+    func rollDice()->Int{
+        return Int.random(in: 0...4)
     }
 }
 
