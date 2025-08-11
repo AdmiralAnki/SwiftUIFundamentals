@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFAudio
 
 struct ContentView: View {
     @State private var message = ""
@@ -13,6 +14,11 @@ struct ContentView: View {
     
     @State var lastMessageNumber = -1
     @State var lastImageNumber = -1
+    @State var lastSoundNumber = -1
+    @State var audioPlayer:AVAudioPlayer!
+    
+    let imageCount = 9
+    let soundCount = 6
     
     let messages = ["You are Awesome!",
                     "You are Great!",
@@ -44,23 +50,14 @@ struct ContentView: View {
             
             Button("Press me!") {
                 
-                var messageNumber = Int.random(in: 0..<messages.count)
-                var imageNumber = Int.random(in: 0..<8)
+                lastMessageNumber = getUniqueRandomNumber(upperBound: messages.count, prevValue: lastMessageNumber)
+                message = messages[lastMessageNumber]
                 
-                while messageNumber == lastMessageNumber{
-                    messageNumber = Int.random(in: 0..<messages.count)
-                }
+                lastImageNumber = getUniqueRandomNumber(upperBound: imageCount-1, prevValue: lastImageNumber)
+                imageName = "image"+"\(lastImageNumber)"
                 
-                message = messages[messageNumber]
-                lastMessageNumber = messageNumber
-                
-                while imageNumber == lastImageNumber{
-                    imageNumber = Int.random(in: 0..<8)
-                }
-                print("message: current: ",imageNumber,"last: ",lastImageNumber)
-                imageName = "image"+"\(imageNumber)"
-                lastImageNumber = imageNumber
-                
+                lastSoundNumber = getUniqueRandomNumber(upperBound: soundCount-1, prevValue: lastSoundNumber)
+                playSound(soundName: "sound\(lastSoundNumber)")
                 
             }
             .buttonStyle(.borderedProminent)
@@ -70,8 +67,32 @@ struct ContentView: View {
         .padding()
     }
     
+    private func playSound(soundName:String){
+        guard let soundFile = NSDataAsset(name: soundName) else{
+            print("File not found")
+            return
+        }
+        
+        do{
+            audioPlayer = try AVAudioPlayer(data: soundFile.data)
+            audioPlayer.play()
+        }catch{
+            print("Error: ",error.localizedDescription)
+        }
+    }
+    
+    private func getUniqueRandomNumber(upperBound:Int,prevValue:Int)->Int{
+        
+        var newValue:Int
+        repeat {
+            newValue = Int.random(in: 0..<upperBound)
+        }while newValue == prevValue
+            
+        return newValue
+        
+    }
     func diceExample(){
-         let sum = rollDice()+rollDice()+rollDice()
+         let sum = rollDice(sides: 4)+rollDice(sides: 4)+rollDice(sides: 4)
         print("You rolled the result: ",sum)
         
         print(Bool.random() ? "Coin Flip: Heads" : "Coin Flip: Tail")
@@ -81,8 +102,8 @@ struct ContentView: View {
         
     }
     
-    func rollDice()->Int{
-        return Int.random(in: 0...4)
+    func rollDice(sides:Int)->Int{
+        return Int.random(in: 0...sides)
     }
 }
 
