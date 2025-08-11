@@ -17,6 +17,8 @@ struct ContentView: View {
     @State var lastSoundNumber = -1
     @State var audioPlayer:AVAudioPlayer!
     
+    @State var isSoundOn = true
+    
     let imageCount = 9
     let soundCount = 6
     
@@ -39,6 +41,8 @@ struct ContentView: View {
                 .frame(height: 120)
                 .animation(.easeInOut(duration: 0.15), value: imageName)
                 
+            Spacer()
+            
             Image(imageName)
                 .resizable()
                 .scaledToFit()
@@ -47,22 +51,37 @@ struct ContentView: View {
                 .animation(.default, value: imageName)
             
             Spacer()
-            
-            Button("Press me!") {
+            HStack{
+                Text("Sound on:")
+                Toggle(isOn: $isSoundOn, label: {})
+                    .onChange(of: isSoundOn, { oldValue, newValue in
+                        if let audioPlayer, audioPlayer.isPlaying{
+                            audioPlayer.stop()
+                        }
+                    })
+                .labelsHidden()
                 
-                lastMessageNumber = getUniqueRandomNumber(upperBound: messages.count, prevValue: lastMessageNumber)
-                message = messages[lastMessageNumber]
+                Spacer()
                 
-                lastImageNumber = getUniqueRandomNumber(upperBound: imageCount-1, prevValue: lastImageNumber)
-                imageName = "image"+"\(lastImageNumber)"
-                
-                lastSoundNumber = getUniqueRandomNumber(upperBound: soundCount-1, prevValue: lastSoundNumber)
-                playSound(soundName: "sound\(lastSoundNumber)")
-                
+                Button("Show message!") {
+                    
+                    lastMessageNumber = getUniqueRandomNumber(upperBound: messages.count, prevValue: lastMessageNumber)
+                    message = messages[lastMessageNumber]
+                    
+                    lastImageNumber = getUniqueRandomNumber(upperBound: imageCount-1, prevValue: lastImageNumber)
+                    imageName = "image"+"\(lastImageNumber)"
+                    
+                    lastSoundNumber = getUniqueRandomNumber(upperBound: soundCount-1, prevValue: lastSoundNumber)
+                    
+                    if isSoundOn{
+                        playSound(soundName: "sound\(lastSoundNumber)")
+                    }
+                    
+                }
+                .buttonStyle(.borderedProminent)
+                .font(.title2)
+                .tint(.orange)
             }
-            .buttonStyle(.borderedProminent)
-            .font(.title2)
-            .tint(.orange)
         }
         .padding()
     }
@@ -74,8 +93,16 @@ struct ContentView: View {
         }
         
         do{
+            
+            if let audioPlayer{
+                if audioPlayer.isPlaying{
+                    audioPlayer.stop()
+                }
+            }
+            
             audioPlayer = try AVAudioPlayer(data: soundFile.data)
             audioPlayer.play()
+            
         }catch{
             print("Error: ",error.localizedDescription)
         }
