@@ -84,6 +84,7 @@ struct ContentView: View {
             }
         }
         .padding()
+        .tint(.accentColor)
     }
     
     private func playSound(soundName:String){
