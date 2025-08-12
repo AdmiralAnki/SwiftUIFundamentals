@@ -94,10 +94,8 @@ struct ContentView: View {
         
         do{
             
-            if let audioPlayer{
-                if audioPlayer.isPlaying{
-                    audioPlayer.stop()
-                }
+            if audioPlayer != nil && audioPlayer.isPlaying{
+                audioPlayer.stop()
             }
             
             audioPlayer = try AVAudioPlayer(data: soundFile.data)
